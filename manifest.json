@@ -1,0 +1,22 @@
+{
+    "name":"cmcc520",
+    "version":"2.0",
+    "description":"powered by 搁浅St",
+    "background": {
+        "scripts": ["bg.js","js/function.js"],
+        "persistent": true
+    },
+    "page_action":{
+        "default_icon":"icon-48.png",
+        "default_title":"cmcc520"
+    },
+    "permissions" : [
+        "tabs", "http://*/*"
+    ],
+    "icons" : {
+        "48" : "icon-48.png",
+        "128" : "icon-128.png"
+    },
+    "manifest_version":2
+
+}
