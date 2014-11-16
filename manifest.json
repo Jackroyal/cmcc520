@@ -3,7 +3,7 @@
     "version":"2.0",
     "description":"powered by 搁浅St",
     "background": {
-        "scripts": ["bg.js","js/function.js"],
+        "scripts": ["bg.js","js/function.js","js/lib.js"],
         "persistent": true
     },
     "page_action":{
@@ -16,6 +16,14 @@
     "icons" : {
         "48" : "icon-48.png",
         "128" : "icon-128.png"
+    },
+    "commands": {
+        "logout_cmcc": {
+            "description": "退出CMCC登录",
+            "suggested_key": {
+                "default": "Alt+K"
+            }
+        }
     },
     "manifest_version":2
 
