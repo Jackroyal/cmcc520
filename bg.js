@@ -6,11 +6,21 @@ function checkUrl(tabId,info,tab) {
 }
 
 function handleCommand(command){
+    alert('from  handleCommand');
     console.log(command);
-    chrome.tabs.getCurrent(function(tab){
+    //notice
+    chrome.tabs.query({'active':true,'highlighted':true,'currentWindow':true},function(tab){
         console.log(tab);
-        chrome.tabs.executeScript(tab, {file: "js/logout.js"}, function() {
-        console.log('下线成功,如果要重新登录,你可能要刷新一下页面')});
+        console.log('   from   getCurrent');
+        console.log(tab[0].id);
+        chrome.tabs.executeScript(tab[0].id, {file: "js/logout.js"}, function(a) {
+            console.log(a);
+            console.log('I from exec a');
+            chrome.tabs.sendMessage(tab[0].id,{'wlan':lget('wlanacname'),'wlanuserip':lget('wlanuserip')},function(rr){
+                console.log(rr);
+            });
+            console.log('下线成功,如果要重新登录,你可能要刷新一下页面');
+        });
     });
 
 }
