@@ -4,8 +4,14 @@
     "description":"powered by 搁浅St",
     "background": {
         "scripts": ["bg.js","js/function.js","js/lib.js"],
-        "persistent": true
+        "persistent": false
     },
+    "content_scripts": [
+    {
+      "matches": ["http://*/*"],
+      "js": ["js/function.js","js/lib.js"]
+    }
+    ],
     "page_action":{
         "default_icon":"icon-48.png",
         "default_title":"cmcc520"
