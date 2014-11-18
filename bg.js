@@ -25,7 +25,41 @@ function handleCommand(command){
 
 }
 
-chrome.runtime.onMessage.addListener(function(req,sen,senr){console.log('I from extension');console.log(req);});
+chrome.runtime.onMessage.addListener(
+    function(req,sen,senr){
+        console.log('I from extension');
+        var aa=JSON.parse(req);
+        // 0: "/LogoutServlet?wlanacname=1022.0027.270.00&wlanuserip=10.80.97.209&ssid=CMCC520&ATTRIBUTE_USERNAME=iWuhanFree0304&ATTRIBUTE_UUID=26FBE9A694B6221958CF6DE2704F0ECA&ATTRIBUTE_IPADDRESS=10.80.97.209&"
+        // 1: "wlanacname=1022.0027.270.00"
+        // 2: "wlanuserip=10.80.97.209"
+        // 3: "ssid=CMCC520"
+        // 4: "ATTRIBUTE_USERNAME=iWuhanFree0304"
+        // 5: "ATTRIBUTE_UUID=26FBE9A694B6221958CF6DE2704F0ECA"
+        // 6: "ATTRIBUTE_IPADDRESS=10.80.97.209"
+        if(aa!=null){
+            if(lget('wlanacname')!=aa[1]){
+                lset('wlanacname',aa[1]);
+            }
+            if(lget('wlanuserip')!=aa[2]){
+                lset('wlanuserip',aa[2]);
+            }
+            if(lget('ssid')!=aa[3]){
+                lset('ssid',aa[3]);
+            }
+            if(lget('ATTRIBUTE_USERNAME')!=aa[4]){
+                lset('ATTRIBUTE_USERNAME',aa[4]);
+            }
+            if(lget('ATTRIBUTE_UUID')!=aa[5]){
+                lset('ATTRIBUTE_UUID',aa[5]);
+            }
+            if(lget('ATTRIBUTE_IPADDRESS')!=aa[6]){
+                lset('ATTRIBUTE_IPADDRESS',aa[6]);
+            }
+            lset('isStorage',true);
+        }else
+            lset('isStorage',false);
+    }
+);
 
 chrome.tabs.onUpdated.addListener(checkUrl);
 

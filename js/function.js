@@ -1,20 +1,20 @@
 var bb={
     init:function(tab){
         var a=regE('(wlanacname.*?)&.*(wlanuserip=(.*?))&',tab.url);
-        if(a!=null){
+        if(a!=null && !bb.isStorage(a)){
             bb.store(a);//存储登陆信息
         }else{
             console.log('url error,please check again');
             return;
         }
+        if (lget('isStorage')==null) {
+            lset('isStorage',false);
+        };
 
     },
     dispatch:function (tabId, info, tab) {
-
-        if(!bb.isStorage())
-        {
-            bb.init(tab);
-        }
+        chrome.pageAction.show(tabId);
+        bb.init(tab);
         if (/.*?\/portal\/\?.*?wlanacname.*?wlanuserip=.*?ssid=CMCC-EDU/.test(tab.url))
         {
             bb.redirect(tabId,info,tab);
@@ -26,7 +26,8 @@ var bb={
         }else
         if (/(http.+?)loginFree\.jsp\?(.*?ssid=)CMCC520/.test(tab.url) && info.status=='complete') {
             //避免频繁提交
-            // if (comTime(lget('lastLoginTime'),60))
+            // if ( (!lget('isStorage') || info.status=='complete')&&comTime(lget('lastLoginTime'),60) )
+            if ( comTime(lget('lastLoginTime'),60) )
             {
                 console.log('from login oo');
                 bb.login(tabId, info, tab);
@@ -68,7 +69,7 @@ var bb={
         console.log(tabId);
         console.log(tab);
         file='js/loged.js';
-        // if (tab.status=="complete")
+        if (lget('isStorage') || tab.status=="complete")
         {
             chrome.tabs.executeScript(tabId,{
                 file:file,
@@ -85,11 +86,12 @@ var bb={
             lset('wlanuserip',a[2]);
             lset('ip',a[3]);
             lset('lastStoreTime',new Date());
+            lset('isStorage',false);
         }
     },
 
-    isStorage:function(){
-        return lget('lastLoginTime')!=null && lget('wlanacname')!=null && lget('wlanuserip')!=null&&comTime(lget('lastStoreTime'),60,null,'>');
+    isStorage:function(a){
+        return lget('lastLoginTime')!=null && lget('wlanacname')!=null && lget('wlanuserip')!=null&&lget('wlanacname')==a[2] && lget('wlanuserip')==a[1];//&&comTime(lget('lastStoreTime'),60,null,'>');
     }
 
 };
