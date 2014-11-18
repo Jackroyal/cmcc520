@@ -25,6 +25,8 @@ function handleCommand(command){
 
 }
 
+chrome.runtime.onMessage.addListener(function(req,sen,senr){console.log('I from extension');console.log(req);});
+
 chrome.tabs.onUpdated.addListener(checkUrl);
 
  chrome.commands.onCommand.addListener(handleCommand);

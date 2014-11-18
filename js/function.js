@@ -20,13 +20,13 @@ var bb={
             bb.redirect(tabId,info,tab);
         }
         else
-        if (/http.+?portal\/loginOnLine\.jsp;jsessionid.*?\?.*?ssid=CMCC520/i.test(tab.url) && info.status=='loading') {
+        if (/http.+?portal\/loginOnLine\.jsp;jsessionid.*?\?.*?ssid=CMCC520/i.test(tab.url)) {
             console.log('login over');
             bb.loged(tabId,tab);
         }else
         if (/(http.+?)loginFree\.jsp\?(.*?ssid=)CMCC520/.test(tab.url) && info.status=='complete') {
             //避免频繁提交
-            if (comTime(lget('lastLoginTime'),60))
+            // if (comTime(lget('lastLoginTime'),60))
             {
                 console.log('from login oo');
                 bb.login(tabId, info, tab);
@@ -67,10 +67,14 @@ var bb={
         console.log('I am loged');
         console.log(tabId);
         console.log(tab);
-        chrome.tabs.executeScript(tabId,{
-        code: "document.write('<center>OK,终于可以关闭这个烦人的计时页面而不会导致掉线了,↖(^ω^)↗</center>');console.clear();console.clear();",
-        runAt: "document_end"
-      });
+        file='js/loged.js';
+        // if (tab.status=="complete")
+        {
+            chrome.tabs.executeScript(tabId,{
+                file:file,
+                runAt: "document_end"
+            });
+        }
 
     },
 
