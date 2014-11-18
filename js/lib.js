@@ -11,6 +11,7 @@ function pageOnunload() {
             g_httpRequest = createHttpRequest();
         }
         g_httpRequest.abort();
+        //http://120.202.164.10:8080/portal/servlets/LogoutServlet?wlanacname=1022.0027.270.00&wlanuserip=10.80.121.235&ssid=CMCC520&ATTRIBUTE_USERNAME=iWuhanFree1626&ATTRIBUTE_UUID=B963432C92AD20460E7080D38398224D&ATTRIBUTE_IPADDRESS=10.80.121.235&cancelAutomatismLogin=false
         g_httpRequest.open("GET", "http://120.202.164.10:8080/portal/servlets/LogoutServlet?"+lget('wlanacname')+"&"+lget('wlanuserip')+"&ssid=CMCC520&ATTRIBUTE_USERNAME=iWuhanFree1492&ATTRIBUTE_UUID=B963432C92AD20460E7080D38398224D&ATTRIBUTE_IPADDRESS="+lget('ip')+"&cancelAutomatismLogin=false", false);
         // alert("ATTRIBUTE_UUID");
         // alert("B963432C92AD20460E7080D38398224D");

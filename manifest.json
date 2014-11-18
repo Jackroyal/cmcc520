@@ -27,7 +27,7 @@
         "logout_cmcc": {
             "description": "退出CMCC登录",
             "suggested_key": {
-                "default": "Alt+K"
+                "default": "Alt+X"
             }
         }
     },

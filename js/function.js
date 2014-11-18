@@ -1,10 +1,11 @@
 var bb={
     init:function(tab){
-        var a=regE('(wlanacname.*?)&.*(wlanuserip=(.*?))&',tab.url);
+        var a=regE('(http\\:\\/\\/[\\d\\.\\:]+?\\/[\\w]+?)\\/.*?(wlanacname.*?)&.*(wlanuserip=.*?)&',tab.url);
         if(a!=null && !bb.isStorage(a)){
             bb.store(a);//存储登陆信息
         }else{
             console.log('url error,please check again');
+            console.log(tab.url);
             return;
         }
         if (lget('isStorage')==null) {
@@ -31,6 +32,8 @@ var bb={
             {
                 console.log('from login oo');
                 bb.login(tabId, info, tab);
+            }else{
+                alert('提交过于频繁了,让我们一起倒数一分钟好不好?');
             }
         };
     },
@@ -49,10 +52,10 @@ var bb={
     },
 
     login:function (tabId,info,tab) {
-        lset('lastLoginTime',new Date());
         chrome.pageAction.show(tab.id);
         if (tab.status=="complete")
         {
+            lset('lastLoginTime',new Date());
             console.log('from update function');
             console.log(tab);
             file='js/login.js';
@@ -81,10 +84,10 @@ var bb={
 
     store:function(a){
         if(lget('lastStoreTime')==null||comTime(lget('lastStoreTime'),60,lget('lastLoginTime'))){
-            //存储 登陆用的wlan的name和ip
-            lset('wlanacname',a[1]);
-            lset('wlanuserip',a[2]);
-            lset('ip',a[3]);
+            //存储 登陆用的wlan的name和登录的url
+            lset('url',a[1]);
+            lset('wlanacname',a[2]);
+            lset('wlanuserip',a[3]);
             lset('lastStoreTime',new Date());
             lset('isStorage',false);
         }

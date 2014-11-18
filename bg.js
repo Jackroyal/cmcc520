@@ -16,10 +16,13 @@ function handleCommand(command){
         chrome.tabs.executeScript(tab[0].id, {file: "js/logout.js"}, function(a) {
             console.log(a);
             console.log('I from exec a');
-            chrome.tabs.sendMessage(tab[0].id,{'wlan':lget('wlanacname'),'wlanuserip':lget('wlanuserip')},function(rr){
-                console.log(rr);
+            chrome.tabs.sendMessage(tab[0].id,{'url':lget('url'),'logoutUrl':lget('logoutUrl')},function(response){
+                if(response===true){
+                    console.log('下线成功,如果要重新登录,你可能要刷新一下页面');
+                }
+                else
+                    console.log(response);
             });
-            console.log('下线成功,如果要重新登录,你可能要刷新一下页面');
         });
     });
 
@@ -37,6 +40,9 @@ chrome.runtime.onMessage.addListener(
         // 5: "ATTRIBUTE_UUID=26FBE9A694B6221958CF6DE2704F0ECA"
         // 6: "ATTRIBUTE_IPADDRESS=10.80.97.209"
         if(aa!=null){
+            if(lget('logoutUrl')!=aa[0]){
+                lset('logoutUrl',aa[0]);
+            }
             if(lget('wlanacname')!=aa[1]){
                 lset('wlanacname',aa[1]);
             }
@@ -56,8 +62,12 @@ chrome.runtime.onMessage.addListener(
                 lset('ATTRIBUTE_IPADDRESS',aa[6]);
             }
             lset('isStorage',true);
-        }else
+        }else{
+            console.log(aa);
             lset('isStorage',false);
+        }
+
+        senr(lget('isStorage'));
     }
 );
 
