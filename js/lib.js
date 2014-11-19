@@ -38,11 +38,13 @@ function pageOnunload() {
 }
 
 function lset(name, value) {
+    bb[name]=value;
     localStorage.setItem(name, value);
 }
 
 function lget(name) {
-    return localStorage.getItem(name);
+    localStorage.getItem(name)=bb[name]=bb[name]||localStorage.getItem(name);
+    return bb[name];
 }
 
 function regE(patt, attr) {
