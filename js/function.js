@@ -1,9 +1,9 @@
 var bb={
-    wlanacname:(window.localStorage.getItem('1wlanacname')||null),
+    wlanacname:(window.localStorage.getItem('wlanacname')||null),
     wlanuserip:window.localStorage.getItem('wlanuserip')||null,
     url:window.localStorage.getItem('url')||null,
     ssid:'ssid=CMCC520',
-    userAgent:'userAgent_1=Mozilla%2F5.0+%28Windows+NT+6.2%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F38.0.2125.111+Safari%2F537.36',
+    userAgent_1:'userAgent_1=Mozilla%2F5.0+%28Windows+NT+6.2%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F38.0.2125.111+Safari%2F537.36',
     logoutUrl:window.localStorage.getItem('logoutUrl')||null,
     isStorage:window.localStorage.getItem('isStorage')||null,
     lastStoreTime:window.localStorage.getItem('lastStoreTime')||null,
@@ -41,16 +41,24 @@ var bb={
     is_Storage:function(a){
         return bb.url!=null && bb.logoutUrl!=null && bb.wlanacname!=null && bb.wlanuserip!=null&&bb.wlanacname==a[2] && bb.wlanuserip==a[1];//&&comTime(bb.lastStoreTime,60,null,'>');
     },
+    is_init:function(){
+        return bb.url!=null && bb.logoutUrl!=null && bb.wlanacname!=null && bb.wlanuserip!=null&&bb.allowAjax&&bb.ssid!=null&&bb.userAgent_1!=null&&bb.lastStoreTime!=null&&bb.lastLoginTime!=null&&bb.isStorage!=null;//&&comTime(bb.lastStoreTime,60,null,'>');
+    },
 
     dispatch:function (tabId, info, tab) {
         chrome.pageAction.show(tabId);
         bb.init(tab);
-        if (/.*?\/portal\/\?.*?wlanacname.*?wlanuserip=.*?ssid=CMCC-EDU/.test(tab.url))
+        if (/.*?\/portal\/\?.*?wlanacname.*?wlanuserip=.*?ssid=CMCC-EDU/.test(tab.url) && info.status=='loading')
         {
-            bb.redirect(tabId,info,tab);
+            if(bb.is_init())
+                bb.login(tabId, info, tab);
+            else{
+                bb.redirect(tabId,info,tab);
+
+            }
         }
         else
-        if (/http.+?portal\/loginOnLine\.jsp;jsessionid.*?\?.*?ssid=CMCC520/i.test(tab.url)) {
+        if (/http.+?portal\/loginOnLine\.jsp;jsessionid.*?\?.*?ssid=CMCC520/i.test(tab.url) && info.status=="complete") {
             console.log('login is over,now loged');
             bb.loged(tabId,tab);
         }else
@@ -58,14 +66,15 @@ var bb={
             //避免频繁提交
             // if ( (!bb.isStorage || info.status=='complete')&&comTime(bb.lastLoginTime,60) )
                 console.log('from login outter');
-            // if ( !bb.lastLoginTime )//|| comTime(bb.lastLoginTime,20) )
+            if ( bb.lastLoginTime==null || comTime(bb.lastLoginTime,10) )
             {
                 console.log('from login inner');
                 bb.login(tabId, info, tab);
             }
-            // else{
-            //     alert('提交过于频繁了,让我们一起倒数一分钟好不好?');
-            // }
+            else{
+                console.log('提交过于频繁了  wait');
+                alert('提交过于频繁了,让我们一起倒数一分钟好不好?');
+            }
         };
     },
 
@@ -75,13 +84,14 @@ var bb={
         chrome.tabs.update(tab.id, {url: a[1]+'loginFree.jsp?'+a[2]+'CMCC520'},
             function (tab){
                 console.log('refirect over');
+                bb.login(tabId, info, tab);
             }
         );
     },
 
     login:function (tabId,info,tab) {
         // if (tab.status=="complete")
-        // {
+        {
             lset('lastLoginTime',new Date());
             console.log('from update function  '+info.status);
             console.log(tab);
@@ -91,8 +101,8 @@ var bb={
                 runAt: "document_end"
             },function(aa){
                 console.log('I am aa'+aa);
-                if (bb.allowAjax&&bb.url && bb.wlanacname && bb.wlanuserip&&bb.ssid&&bb.userAgent) {
-                    chrome.tabs.sendMessage(tab[0].id,{'ajax':bb.allowAjax,'url':bb.url,'wlanacname':bb.wlanacname,'wlanuserip':bb.wlanuserip,'ssid':bb.ssid,'userAgent':bb.userAgent},function(response){
+                if (bb.allowAjax&&bb.url && bb.wlanacname && bb.wlanuserip&&bb.ssid&&bb.userAgent_1) {
+                    chrome.tabs.sendMessage(tab.id,{'allowAjax':bb.allowAjax,'url':bb.url,'wlanacname':bb.wlanacname,'wlanuserip':bb.wlanuserip,'ssid':bb.ssid,'userAgent_1':bb.userAgent_1},function(response){
                         if(response===true){
                             console.log('ajax登陆成功');
                         }
@@ -100,7 +110,7 @@ var bb={
                             console.log('ajax'+response);
                     });
                 }else{
-                    chrome.tabs.sendMessage(tab[0].id,{'ajax':bb.allowAjax},function(response){
+                    chrome.tabs.sendMessage(tab[0].id,{'allowAjax':bb.allowAjax},function(response){
                         if(response===true){
                             console.log('非ajax登陆成功');
                         }
@@ -109,7 +119,7 @@ var bb={
                     });
                 }
             });
-        // }
+        }
 
     },
 
@@ -122,7 +132,7 @@ var bb={
         {
             chrome.tabs.executeScript(tabId,{
                 file:file,
-                runAt: "document_end"
+                runAt: "document_start"
             });
         }
 
