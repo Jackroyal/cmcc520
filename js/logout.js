@@ -3,7 +3,7 @@ function createHttpRequest() {
     request = new XMLHttpRequest;
     return request;
 }
-alert('logout insert success');
+alert('正在下线');
 function pageOnunload(url,logoutUrl) {
     // try {
         var g_httpRequest;

@@ -58,21 +58,17 @@ var bb={
         }
         else
         if (/http.+?portal\/loginOnLine\.jsp;jsessionid.*?\?.*?ssid=CMCC520/i.test(tab.url) && info.status=="complete") {
-            console.log('login is over,now loged');
             bb.loged(tabId,tab);
         }else
         if (/(http.+?)loginFree\.jsp\?(.*?ssid=)CMCC520/.test(tab.url) && info.status=='complete') {
             //避免频繁提交
-            // if ( (!bb.isStorage || info.status=='complete')&&comTime(bb.lastLoginTime,60) )
-                console.log('from login outter');
-            if ( bb.lastLoginTime==null || comTime(bb.lastLoginTime,10) )
+            if ( bb.lastLoginTime==null || comTime(bb.lastLoginTime,3) )
             {
-                console.log('from login inner');
                 bb.login(tabId, info, tab);
             }
             else{
                 console.log('提交过于频繁了  wait');
-                alert('提交过于频繁了,让我们一起倒数一分钟好不好?');
+                alert('提交过于频繁了,让我们一起倒数3秒可好?');
             }
         };
     },
@@ -82,31 +78,23 @@ var bb={
         a=regex1.exec(tab.url);//讲地址分为三段,直接跳
         chrome.tabs.update(tab.id, {url: a[1]+'loginFree.jsp?'+a[2]+'CMCC520'},
             function (tab){
-                console.log('refirect over');
-                bb.login(tabId, info, tab);
+                // console.log('refirect over');
+                //bb.login(tabId, info, tab);
             }
         );
     },
 
     login:function (tabId,info,tab) {
-        // if (tab.status=="complete")
         {
             bb.lset('lastLoginTime',new Date());
-            console.log('from update function  '+info.status);
-            console.log(tab);
             file='js/login.js';
             chrome.tabs.executeScript(tab.id,{
                 file : file,
                 runAt: "document_end"
-            },function(aa){
-                console.log('I am aa'+aa);
+            },function(){
                 if (bb.allowAjax&&bb.url && bb.wlanacname && bb.wlanuserip&&bb.ssid&&bb.userAgent_1) {
                     chrome.tabs.sendMessage(tab.id,{'allowAjax':bb.allowAjax,'url':bb.url,'wlanacname':bb.wlanacname,'wlanuserip':bb.wlanuserip,'ssid':bb.ssid,'userAgent_1':bb.userAgent_1},function(response){
-                        if(response===true){
-                            console.log('ajax登陆成功');
-                        }
-                        else
-                            console.log('ajax'+response);
+                    //因为异步的缘故,将此处判断转移到handleMessage中
                     });
                 }else{
                     chrome.tabs.sendMessage(tab[0].id,{'allowAjax':bb.allowAjax},function(response){
@@ -188,15 +176,13 @@ var bb={
         }
     },
     handleCommand:function (command){
-        if (!bb.lget('logoutTime') || bb.comTime(bb.lget('logoutTime'),10)) {
+        if (!bb.lget('logoutTime') || bb.comTime(bb.lget('logoutTime'),4)) {
             //notice
             lset('logoutTime',new Date());
             chrome.tabs.query({'active':true,'highlighted':true,'currentWindow':true},function(tab){
                 if (bb.url!=null && bb.logoutUrl!=null)
                 {
-                    chrome.tabs.executeScript(tab[0].id, {file: "js/logout.js"}, function(a) {
-                        console.log(a);
-                        console.log('I from exec a');
+                    chrome.tabs.executeScript(tab[0].id, {file: "js/logout.js"}, function() {
                         chrome.tabs.sendMessage(tab[0].id,{'url':bb.url,'logoutUrl':bb.logoutUrl},function(response){
                             if(response===true){
                                 console.log('下线成功,如果要重新登录,你可能要刷新一下页面');
@@ -224,10 +210,17 @@ var bb={
         // 6: "ATTRIBUTE_IPADDRESS=10.80.97.209"
         if(aa!=null){
             var xarr=['logoutUrl','wlanacname','wlanuserip','ssid','ATTRIBUTE_USERNAME','ATTRIBUTE_UUID','ATTRIBUTE_IPADDRESS'];
-            for(var i in xarr){
-                if(this[xarr[i]]!=aa[i]){
+            for(var i=0;i<aa.length;i++){
+                if(i<xarr.length &&this[xarr[i]]!=aa[i]){
                     bb.lset(xarr[i],aa[i]);
-                }
+                }else
+                    if(i>=xarr.length){
+                         if(aa[i]===true){
+                            console.log('ajax登陆成功');
+                        }
+                        else
+                            console.log('ajax'+response);
+                    }
             }
             bb.lset('isStorage',true);
         }else{
