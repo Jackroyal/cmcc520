@@ -43,7 +43,7 @@ function lset(name, value) {
 }
 
 function lget(name) {
-    localStorage.getItem(name)=bb[name]=bb[name]||localStorage.getItem(name);
+    localStorage.setItem(name,bb[name]=bb[name]||localStorage.getItem(name));
     return bb[name];
 }
 

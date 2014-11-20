@@ -3,13 +3,13 @@
     "version":"2.0",
     "description":"powered by 搁浅St",
     "background": {
-        "scripts": ["bg.js","js/function.js","js/lib.js"],
+        "scripts": ["js/function.js","bg.js","js/lib.js"],
         "persistent": false
     },
     "content_scripts": [
     {
       "matches": ["http://*/*"],
-      "js": ["js/function.js","js/lib.js"]
+      "js": ["js/function.js"]
     }
     ],
     "page_action":{

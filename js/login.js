@@ -1,5 +1,3 @@
-    document.body.style.backgroundColor="red";
-    //alert(1123);
     function post_ajax(allowAjax,url,wlanacname,wlanuserip,ssid,userAgent_1){
         if(!allowAjax){
             if(document.head.getElementsByTagName('script').length==1){
@@ -13,6 +11,7 @@
             }
         }
         else{
+            document.body.style.backgroundColor="document.write('<center>正在发送登录请求,请稍等,不要关闭本页,↖(^ω^)↗</center>');console.clear();";
             var xhr=new XMLHttpRequest();
             xhr.abort();
             xhr.open('POST',url+"/servlets/SingleLoginServlet");
@@ -55,17 +54,17 @@
     }
 
     chrome.runtime.onMessage.addListener(function(req,sen,senr){
-    if(req!=null){
-        if(req['allowAjax']){
-            senr( post_ajax(req['allowAjax'],req['url'],req['wlanacname'],req['wlanuserip'],req['ssid'],req['userAgent_1']));
-        }else
-            if(req['allowAjax']==false)
-                senr( post_ajax(req['allowAjax'],null,null,null,null,null));
-            else
-                senr(false);
+        if(req!=null){
+            if(req['allowAjax']){
+                senr( post_ajax(req['allowAjax'],req['url'],req['wlanacname'],req['wlanuserip'],req['ssid'],req['userAgent_1']));
+            }else
+                if(req['allowAjax']==false)
+                    senr( post_ajax(req['allowAjax'],null,null,null,null,null));
+                else
+                    senr(false);
 
-    }else{
-        senr({'error':"登陆请求失败！扩展传递参数有误"});
-    }
-});
+        }else{
+            senr({'error':"登陆请求失败！扩展传递参数有误"});
+        }
+    });
     alert(000999999999999999);

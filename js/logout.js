@@ -3,9 +3,6 @@ function createHttpRequest() {
     request = new XMLHttpRequest;
     return request;
 }
-function lget(name) {
-    return localStorage.getItem(name);
-}
 alert('logout insert success');
 function pageOnunload(url,logoutUrl) {
     // try {
@@ -17,7 +14,6 @@ function pageOnunload(url,logoutUrl) {
         g_httpRequest.open("GET", url+"/"+logoutUrl+"false", false);
         g_httpRequest.send();
         if (g_httpRequest.status == 200) {
-            window.status = "notifyBaseLogout : |" + g_httpRequest.responseText + "|";
             if (g_httpRequest.responseText.indexOf("SUCCESS") != -1) {
                 alert('下线成功!!!!!!!!');
                 console.log('下线成功鸟急急急急急急');
