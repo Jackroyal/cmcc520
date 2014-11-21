@@ -26,7 +26,7 @@ var bb={
 
     },
     store:function(a){
-        if(bb.lastStoreTime==null||comTime(bb.lastStoreTime,60,bb.lastLoginTime)){
+        if(bb.lastStoreTime==null||bb.comTime(bb.lastStoreTime,60,bb.lastLoginTime)){
             //存储 登陆用的wlan的name和登录的url
             window.localStorage.clear();
             bb.lset('url',a[1]);
@@ -62,7 +62,7 @@ var bb={
         }else
         if (/(http.+?)loginFree\.jsp\?(.*?ssid=)CMCC520/.test(tab.url) && info.status=='complete') {
             //避免频繁提交
-            if ( bb.lastLoginTime==null || comTime(bb.lastLoginTime,3) )
+            if ( bb.lastLoginTime==null || bb.comTime(bb.lastLoginTime,3) )
             {
                 bb.login(tabId, info, tab);
             }
