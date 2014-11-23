@@ -1,15 +1,16 @@
 var bb={
-    wlanacname:(window.localStorage.getItem('wlanacname')||null),//记录CMCC-EDU分配的网络名
+    wlanacname:window.localStorage.getItem('wlanacname')||null,//记录CMCC-EDU分配的网络名
     wlanuserip:window.localStorage.getItem('wlanuserip')||null,//记录CMCC-ED分配的ip
     url:window.localStorage.getItem('url')||null,//网站的主要地址,例如ttp://120.202.164.10:8080/portal
     ssid:'ssid=CMCC520',//网络的SSID
     userAgent_1:'userAgent_1=Mozilla%2F5.0+%28Windows+NT+6.2%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F38.0.2125.111+Safari%2F537.36',//浏览器useragent
     logoutUrl:window.localStorage.getItem('logoutUrl')||null,//记录注销的url
-    isStorage:window.localStorage.getItem('isStorage')||null,//是否所有信息都存储了,包括登录和注销用的参数
+    isStorage:JSON.parse(window.localStorage.getItem('isStorage'))||null,//是否所有信息都存储了,包括登录和注销用的参数
     lastStoreTime:window.localStorage.getItem('lastStoreTime')||null,//最近一次执行初始化操作的时间
     lastLoginTime:window.localStorage.getItem('lastLoginTime')||null,//最后一次执行login操作的时间
-    allowAjax:window.localStorage.getItem('allowAjax')||true,//是否允许ajax登录,如果网速不好可以禁用ajax登录
+    allowAjax:JSON.parse(window.localStorage.getItem('allowAjax'))||true,//是否允许ajax登录,如果网速不好可以禁用ajax登录
     logoutTime:window.localStorage.getItem('logoutTime')||null,//记录下线时间
+    power:window.localStorage.getItem('power')||'on',//记录下线时间
 
     init:function(tab){
         var a=bb.regE('(http\\:\\/\\/[\\d\\.\\:]+?\\/[\\w]+?)\\/.*?(wlanacname.*?)&.*(wlanuserip=.*?)&',tab.url);
@@ -46,31 +47,36 @@ var bb={
 
     dispatch:function (tabId, info, tab) {
         chrome.pageAction.show(tabId);
-        bb.init(tab);
-        if (/.*?\/portal\/\?.*?wlanacname.*?wlanuserip=.*?ssid=CMCC-EDU/.test(tab.url) && info.status=='loading')
-        {
-            if(bb.is_init())
-                bb.login(tabId, info, tab);
-            else{
-                bb.redirect(tabId,info,tab);
-
-            }
-        }
-        else
-        if (/http.+?portal\/loginOnLine\.jsp;jsessionid.*?\?.*?ssid=CMCC520/i.test(tab.url) && info.status=="complete") {
-            bb.loged(tabId,tab);
-        }else
-        if (/(http.+?)loginFree\.jsp\?(.*?ssid=)CMCC520/.test(tab.url) && info.status=='complete') {
-            //避免频繁提交
-            if ( bb.lastLoginTime==null || bb.comTime(bb.lastLoginTime,3) )
+        if (window.localStorage.power=="on") {
+            bb.init(tab);
+            if (/.*?\/portal\/\?.*?wlanacname.*?wlanuserip=.*?ssid=CMCC-EDU/.test(tab.url) && info.status=='loading')
             {
-                bb.login(tabId, info, tab);
+                if(bb.is_init())
+                    bb.login(tabId, info, tab);
+                else{
+                    bb.redirect(tabId,info,tab);
+
+                }
             }
-            else{
-                console.log('提交过于频繁了  wait');
-                alert('提交过于频繁了,让我们一起倒数3秒可好?');
-            }
-        };
+            else
+            if (/http.+?portal\/loginOnLine\.jsp;jsessionid.*?\?.*?ssid=CMCC520/i.test(tab.url) && info.status=="complete") {
+                bb.loged(tabId,tab);
+            }else
+            if (/(http.+?)loginFree\.jsp\?(.*?ssid=)CMCC520/.test(tab.url) && info.status=='complete') {
+                //避免频繁提交
+                if ( bb.lastLoginTime==null || bb.comTime(bb.lastLoginTime,3) )
+                {
+                    bb.login(tabId, info, tab);
+                }
+                else{
+                    console.log('提交过于频繁了  wait');
+                    alert('提交过于频繁了,让我们一起倒数3秒可好?');
+                }
+            };
+        }else
+            if (window.localStorage.power==null) {
+                window.localStorage.power='on';
+            };
     },
 
     redirect:function(tabId, info, tab){
@@ -178,7 +184,7 @@ var bb={
     handleCommand:function (command){
         if (!bb.lget('logoutTime') || bb.comTime(bb.lget('logoutTime'),4)) {
             //notice
-            lset('logoutTime',new Date());
+            bb.lset('logoutTime',new Date());
             chrome.tabs.query({'active':true,'highlighted':true,'currentWindow':true},function(tab){
                 if (bb.url!=null && bb.logoutUrl!=null)
                 {
@@ -224,7 +230,6 @@ var bb={
             }
             bb.lset('isStorage',true);
         }else{
-            console.log(aa);
             bb.lset('isStorage',false);
         }
         senr(bb.isStorage);
