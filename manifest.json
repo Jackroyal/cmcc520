@@ -6,12 +6,6 @@
         "scripts": ["js/function.js","bg.js"],
         "persistent": false
     },
-    "content_scripts": [
-    {
-      "matches": ["http://*/*"],
-      "js": ["js/function.js"]
-    }
-    ],
     "page_action":{
         "default_icon":"icon-48.png",
         "default_popup": "popup.html",

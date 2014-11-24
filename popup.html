@@ -1,26 +1,41 @@
-<!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
-    <title>CMCC520</title>
-    <style>body {background:#fafafa;padding:0;margin:0;color:#333;}
-            li {float: left}</style>
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+	<title>cmcc520</title>
+	<style type="text/css">
+	*{margin: 0;padding: 0}
+	.banner1,.banner2{
+		margin: 10px 0 0 10px;
+		font-size: 12px;
+	}
+    body{width:280px; margin: 10px 0;}
+	p{float: left;}
+	.close,.open{float: left; margin-left: 10px;}
+	a{line-height: 12px;text-decoration: none;display: inline-block;}
+	img{width: 16px;height: 16px;float: left;}
+	span{line-height: 14px;margin-left: 2px;}
+	</style>
 </head>
 <body>
-    <div style="width:250px;background:#fafafa !important;line-height:28px !important;font-size:12px !important; margin-left:10px !important;">
-    <div style="float:left">软件设置：</div>
-        <ul style="list-style:none">
-            <li>
-                <input type="radio" name="switch" id="off">
-                <label for="off">关闭</label>
-            </li>
-            <li>
-                <input type="radio" name="switch" id="on">
-                <label for="on">打开</label>
-            </li>
-        </ul>
-    <div style="display:inline-block">反馈BUG：<a href="http://weibo.com/517123263" target="_blank"><img src="weibo.jpg" alt="搁浅St" style="width:16px;">搁浅St</a></div>
-    </div>
+	<div class="banner1">
+		<p>软件设置：</p>
+		<div class="close">
+			<input type="radio" name="switch" id="off">
+            <label for="off">关闭</label>
+		</div>
+		<div class="open">
+			<input type="radio" name="switch" id="on">
+            <label for="on">打开</label>
+		</div>
+		<div style="clear:both"></div>
+	</div>
+	<div style="clear:both"></div>
+	<div class="banner2">
+		<p>反馈BUG：</p>
+		<a href="http://weibo.com/517123263" target="_blank">
+			<img src="weibo.jpg"><span>搁浅St</span>
+		</a>
+	</div>
     <script src="js/popup.js"></script>
-    </body>
+</body>
 </html>
