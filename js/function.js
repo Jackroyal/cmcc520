@@ -47,7 +47,12 @@ var bb={
 
     dispatch:function (tabId, info, tab) {
         chrome.pageAction.show(tabId);
-        if (window.localStorage.power=="on") {
+        if(bb.power!=window.localStorage.power && window.localStorage.power!=null)
+            bb.power=window.localStorage.power;
+        else
+            window.localStorage.power=bb.power;
+
+        if (bb.lget('power')=="on") {
             bb.init(tab);
             if (/.*?\/portal\/\?.*?wlanacname.*?wlanuserip=.*?ssid=CMCC-EDU/.test(tab.url) && info.status=='loading')
             {
@@ -70,12 +75,11 @@ var bb={
                 }
                 else{
                     console.log('提交过于频繁了  wait');
-                    alert('提交过于频繁了,让我们一起倒数3秒可好?');
                 }
             };
         }else
-            if (window.localStorage.power==null) {
-                window.localStorage.power='on';
+            if (bb.lget('power')==null) {
+                bb.lset('power','on');
             };
     },
 

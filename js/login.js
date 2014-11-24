@@ -37,6 +37,8 @@
                     if(mes.length==2){
                         var warn=mes[0].match(/alert\(([\S]*?)\)/);
                         alert(warn[1]);
+                        document.close();
+                        document.write("<center>'"+warn[1]+"'</center>");
                         return  (warn[1]);
                     }else{
                         alert('对不起,登陆不成功,可能是你所在的区域不支持,请重试');
